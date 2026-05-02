@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/lending
+    username: postgres
+    password: postgres
+
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      embedding:
+        model: nomic-embed-text
+      chat:
+        model: llama3.2
+
+  vectorstore:
+    pgvector:
+      initialize-schema: true
+      
+server:
+  port: 8082
+    
+    
