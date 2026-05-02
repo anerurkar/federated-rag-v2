@@ -2,94 +2,140 @@
 # federated-rag-v2
 Federated RAG Version2 POC
 =======
-# Federated RAG Version1
+# Federated RAG Version2
 
-README - Federated RAG Version1 
-Overview
+README - Federated RAG Version2
+📘 Federated RAG V2 — Enterprise AI Knowledge Architecture
+🧭 Overview
 
-Version 1 is a fully local federated RAG proof of concept built with Spring Boot, Spring AI, PostgreSQL + pgvector, and Ollama embeddings.
+Federated RAG V2 is a domain-aware Retrieval-Augmented Generation (RAG) system designed for enterprise BFSI use cases such as:
 
-It demonstrates:
+🏦 KYC (Know Your Customer)
+💰 Lending & Credit Policy
+💳 Payments & Fraud Context (extensible)
 
-domain-based intent routing
-KYC knowledge hub
-Lending knowledge hub
-single-domain retrieval
-multi-domain federated retrieval
-merged response from multiple domain knowledge hubs
-Architecture
+It implements a multi-domain knowledge architecture with intelligent routing, vector search, and metadata-driven retrieval using Spring Boot, Spring AI, and pgvector.
+
+🚀 Key Capabilities
+🔍 Domain-based query routing (KYC / Lending / etc.)
+🧠 Vector-based semantic search using pgvector
+📄 Document ingestion from structured knowledge sources
+🏷️ Metadata tagging for domain isolation
+⚡ REST API for real-time query retrieval
+🧩 Extensible architecture for federated knowledge hubs
+🏗️ Architecture
 User Query
-   ->
-Intent Router
-   ->
-KYC Knowledge Hub / Lending Knowledge Hub
-   ->
-Top-K Retrieval
-   ->
-Merge Results
-   ->
-Return Response
-Prerequisites
-
-Install locally:
-
+    ↓
+Intent Router (Domain Detection)
+    ↓
++----------------------+
+|  KYC Knowledge Hub   |
+|  Lending Hub         |
+|  Payments Hub        |
++----------------------+
+    ↓
+Vector Search (pgvector)
+    ↓
+Top-K Relevant Chunks
+    ↓
+Response Aggregation Layer
+    ↓
+Final Answer
+📁 Project Structure
+federated-rag-v2
+│
+├── src/main/java
+│   └── service/
+│       ├── IngestionService.java
+│       ├── FederatedQueryService.java
+│       └── RouterService.java
+│
+├── src/main/resources
+│   └── data/
+│       ├── kyc/
+│       │    └── kyc.txt
+│       ├── lending/
+│       │    └── lending.txt
+│
+├── docker-compose.yml
+├── application.yml
+└── README.md
+⚙️ Tech Stack
 Java 17
-Maven 3.9+
-Docker
-Ollama
-Start services
-Start PostgreSQL + pgvector
+Spring Boot 3.x
+Spring AI
+PostgreSQL + pgvector
+Docker Compose
+Ollama (local LLM + embeddings)
+REST APIs
+🐳 Infrastructure Setup
+Start PostgreSQL with pgvector
 docker compose up -d
-Pull embedding model
-ollama pull nomic-embed-text
 
-Ollama usually runs as a background service. If not running, start it manually.
+Ensure database:
 
-Run application
-mvn spring-boot:run
+ragdb
+🧠 AI Models (Local Setup)
 
-When startup succeeds, you should see Spring Boot start on port 8080.
+Using Ollama:
 
-Test queries
+Chat Model: llama3.2
+Embedding Model: nomic-embed-text
+📥 Data Ingestion Flow
+
+On application startup:
+
+KYC Policy → Chunking → Embedding → Vector Store
+Lending Policy → Chunking → Embedding → Vector Store
+
+Each document is tagged with:
+
+{
+  "domain": "kyc",
+  "source": "data/kyc/kyc.txt"
+}
+🔎 API Usage
+▶️ KYC Query
+curl "http://localhost:8082/ask?q=what triggers edd in kyc"
+▶️ Lending Query
+curl "http://localhost:8082/ask?q=minimum salary for personal loan"
+▶️ Cross-Domain Query
+curl "http://localhost:8082/ask?q=loan blocked after kyc clearance"
+🧪 Sample Responses
 KYC
-curl "http://localhost:8080/ask?q=why%20did%20customer%20trigger%20edd"
-
-Expected:
-
-[kyc] Enhanced due diligence is triggered when PEP match, sanctions hit, or high-risk geography is detected.
+PEP match or sanctions hit triggers Enhanced Due Diligence (EDD).
 Lending
-curl "http://localhost:8080/ask?q=what%20is%20minimum%20salary%20for%20personal%20loan"
+Minimum salary requirement for personal loan is INR 25,000.
+🧩 Design Highlights
+✔ Federated Knowledge Hubs
 
-Expected:
+Each domain is isolated for governance and compliance.
 
-[lending] Personal loan requires minimum monthly salary of INR 25000. Disbursement can be blocked if underwriting exception exists.
-Multi-domain
-curl "http://localhost:8080/ask?q=loan%20disbursement%20blocked%20after%20kyc%20cleared"
+✔ Metadata-Aware Retrieval
 
-Expected:
+Ensures correct domain filtering during search.
 
-[kyc] ...
-[lending] ...
-What Version 1 proves
+✔ Extensible Routing Layer
 
-Version 1 validates the enterprise retrieval flow:
+New domains can be added without changing core logic.
 
-detect intent from query
-route to one or multiple domain knowledge hubs
-retrieve relevant chunks
-merge domain results
-return federated response
-Current limitations
+🔐 BFSI Alignment
 
-Version 1 intentionally keeps the implementation simple.
+This architecture supports:
 
-Not yet included:
+AML / KYC compliance workflows
+Audit-friendly knowledge retrieval
+Domain isolation for regulatory requirements
+Explainable AI responses
+🚀 Future Enhancements (V3 Roadmap)
+🔁 Multi-hop reasoning across domains
+🧠 Reranking layer (cross-encoder)
+📊 Confidence scoring per response
+📜 Audit logs for regulatory compliance
+🔄 Kafka-based ingestion pipeline
+🤖 Agentic AI query orchestration
+👨‍💻 Author
 
-chunking
-reranking
-PDF ingestion
-grounded LLM answer generation
-operational transaction context
-
-These are introduced in Version 2.
->>>>>>> 736b43c (added)
+Anand Nerurkar
+Enterprise Architect | AI & Cloud Transformation Leader
+Specializing in BFSI AI modernization & federated architectures
